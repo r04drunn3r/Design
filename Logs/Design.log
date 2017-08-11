@@ -1,6 +1,0 @@
-::1 - - [11/Aug/2017:08:16:51 +0000] "GET /Design HTTP/1.1" 200 15602 "http://localhost:3000/Design" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36"
-::1 - - [11/Aug/2017:08:21:21 +0000] "GET /Design HTTP/1.1" 200 15406 "http://localhost:3000/Design" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36"
-::1 - - [11/Aug/2017:08:21:45 +0000] "GET /Design HTTP/1.1" 200 15594 "http://localhost:3000/Design" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36"
-::1 - - [11/Aug/2017:08:24:44 +0000] "GET /Design HTTP/1.1" 304 - "http://localhost:3000/Design" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36"
-::1 - - [11/Aug/2017:08:24:46 +0000] "GET /Design HTTP/1.1" 304 - "http://localhost:3000/Design" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36"
-::1 - - [11/Aug/2017:08:24:53 +0000] "GET /Design HTTP/1.1" 304 - "http://localhost:3000/Design" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36"
