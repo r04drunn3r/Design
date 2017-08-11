@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Code Challenge</title>
+    <base href="/">
+    <link rel='stylesheet prefetch' href='Contents/bootstrap.min.css'>
+    <link rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+    <link rel="stylesheet" href="Contents/colorpicker.min.css">
+    <link rel="stylesheet" href="Contents/style.css"> </head>
+
+<body>
+    <div class="navbar navbar-default"> <a class="navbar-brand" href="#">Design</a> </div>
+    <div ng-app='example' ng-controller="ExampleCtrl" data-ng-init="load()" class="body-class">
+        <div class='image-builder-container body-class'>
+            <div ng-if="fabric.isLoading()" class="image-loading">
+                <div class="loading-indicator"></div>
+            </div>
+            <div class="row form-group">
+                <div class="col-sm-12">
+                    <div class='btn-group pull-left mrm'>
+                        <input type="file" id="file-upload" onchange="angular.element(this).scope().uploadFile(this.files)" accept="image/*" style="display:none" />
+                        <label for="file-upload" class='btn btn-default'> <i class='fa fa-image'></i>
+                            <div class='clearfix'></div> Image </label>
+                        <button ng-click="fabric.addText();saveState('Text Added')" class='btn btn-default'> <i class='fa fa-font'></i>
+                            <div class='clearfix'></div> &nbsp; Text &nbsp; </button>
+                        <button class='btn btn-default' colorpicker="hex" type="button" colorpicker-with-input="true" ng-model="fabric.canvasBackgroundColor" ng-change='fabric.setDirty(true); fabric.stopContinuousRendering()' ng-blur='saveState("BG Color Changed")'> <i class='fa fa-adjust'></i>
+                            <div class='clearfix'></div> BG-Color </button>
+                        <button ng-click="fabric.clearCanvas(); fabric.setDirty(true)" class='btn btn-default'> <i class='fa fa-refresh'></i>
+                            <div class='clearfix'></div> Restart </button>
+                    </div>
+                    <div class='pull-left' style='margin: 15px 0 0 10px;'>
+                        <div class='row'>
+                            <div class='col-xs-1 text-center'> <i class='fa fa-search-minus pull-left'></i> </div>
+                            <div class='col-xs-6'>
+                                <input type='range' class='pull-left' min='.1' max='3' step='.1' ng-change='fabric.setZoom()' ng-model='fabric.canvasScale' /> </div>
+                            <div class='col-xs-1 text-center'> <i class='fa fa-search-plus'></i> </div>
+                            <div class='col-xs-3'>
+                                <button class='btn btn-xs btn-default' ng-click="fabric.resetZoom()"> Reset </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pull-right">
+                        <div class='col-xs-6'>
+                            <label>Canvas Size</label>
+                            <button ng-hide='canvasCopy' class='btn btn-default btn-block mrm' ng-click='selectCanvas()'> {{ fabric.canvasOriginalWidth }} x {{ fabric.canvasOriginalHeight }} </button>
+                            <div class='row form-group' ng-show='canvasCopy'>
+                                <div class='col-xs-12'>
+                                    <form ng-submit='setCanvasSize()'>
+                                        <div class='form-group'>
+                                            <label>Width</label>
+                                            <input type='text' ng-model='canvasCopy.width' class='form-control' /> </div>
+                                        <div class='form-group'>
+                                            <label>Height</label>
+                                            <input type='text' ng-model='canvasCopy.height' class='form-control' /> </div>
+                                        <button type='submit' class='btn btn-success'> Submit </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='col-xs-3'>
+                            <button class='btn btn-default' ng-click=saveClick()> <i class='fa fa-save'></i>
+                                <div class='clearfix'></div> Save <span ng-show='fabric.isDirty()' class='text-danger'>*</span> </button>
+                        </div>
+                        <div class='col-xs-3'>
+                            <button ng-click="fabric.download('myCanvas')" class='btn btn-success'> <i class='fa fa-download'></i>
+                                <div class='clearfix'></div> Export </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class='row form-group'>
+                <div class='col-xs-3'>
+                    <div ng-if='fabric.selectedObject'>
+                        <div ng-switch='fabric.selectedObject.type'>
+                            <div ng-switch-when='text'>
+                                <p>
+                                    <textarea style="text-align: {{ fabric.selectedObject.textAlign }}" class="form-control" rows="3" ng-model="fabric.selectedObject.text"></textarea>
+                                </p>
+                                <div class='row form-group'>
+                                    <div class='col-xs-6'> <i class="fa fa-text-height"></i>
+                                        <input type='number' class="form-control" ng-model="fabric.selectedObject.fontSize" /> </div>
+                                    <div class='col-xs-6'> <i class="fa fa-align-left"></i>
+                                        <input type='number' class="form-control" ng-model="fabric.selectedObject.lineHeight" step=".1" /> </div>
+                                </div>
+                                <div class='row form-group'>
+                                    <div class='col-xs-6'>
+                                        <div class='btn-group'>
+                                            <button ng-class="{ active: fabric.selectedObject.textAlign == 'left' }" ng-click="fabric.selectedObject.textAlign = 'left';saveState('Align-Left')" class='btn btn-small btn-default'> <i class='fa fa-align-left'></i> </button>
+                                            <button ng-class="{ active: fabric.selectedObject.textAlign == 'center' }" ng-click="fabric.selectedObject.textAlign = 'center';saveState('Align-Center')" class='btn btn-small btn-default'> <i class='fa fa-align-center'></i> </button>
+                                            <button ng-class="{ active: fabric.selectedObject.textAlign == 'right' }" ng-click="fabric.selectedObject.textAlign = 'right';saveState('Align-Right')" class='btn btn-small btn-default'> <i class='fa fa-align-right'></i> </button>
+                                        </div>
+                                    </div>
+                                    <div class='col-xs-6'>
+                                        <div class='btn-group'>
+                                            <button ng-class="{ active: fabric.isBold() }" ng-click="fabric.toggleBold()" class='btn btn-small btn-default'> <i class='fa fa-bold'></i> </button>
+                                            <button ng-class="{ active: fabric.isItalic() }" ng-click="fabric.toggleItalic()" class='btn btn-small btn-default'> <i class='fa fa-italic'></i> </button>
+                                            <button ng-class="{ active: fabric.isUnderline() }" ng-click="fabric.toggleUnderline()" class='btn btn-small btn-default'> <i class='fa fa-underline'></i> </button>
+                                            <button ng-class="{ active: fabric.isLinethrough() }" ng-click="fabric.toggleLinethrough()" class='btn btn-small btn-default'> <i class='fa fa-strikethrough'></i> </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="btn-group col-sm-6">
+                                        <a class="btn btn-default btn-block dropdown-toggle" data-toggle="dropdown" href="#"> <span class='object-font-family-preview' style='font-family: "{{ fabric.selectedObject.fontFamily }}";'>
+                      {{ fabric.selectedObject.fontFamily }}
+                    </span> <span class="caret"></span> </a>
+                                        <ul class="dropdown-menu">
+                                            <li ng-repeat='font in FabricConstants.fonts' ng-click='fabric.selectedObject.fontFamily = font.name;saveState("Font Changed")' style='font-family: "{{ font.name }}";'> <a>{{ font.name }}</a> </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <button class='btn btn-small btn-block btn-default' ng-class="{ active: fabric.getFlipX() }" ng-click="{ active: fabric.toggleFlipX() }"> <i class='fa fa-exchange'></i> Flip </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <input class='col-sm-12' title="Transparency" type='range' min="0" max="1" step=".01" ng-model="fabric.selectedObject.opacity" /> </div>
+                        </div>
+                        <div class="row form-group" ng-hide="fabric.selectedObject.type == 'image'">
+                            <div class="col-sm-12">
+                                <input type="text" colorpicker="hex" colorpicker-with-input='true' class='form-control' ng-model="fabric.selectedObject.fill" ng-blur="saveState('Font Color')" /> </div>
+                        </div>
+                        <div class="row">
+                            <div class="btn col-xs-12 ">
+                                <button ng-click='fabric.center();saveState("Centered")' class='btn btn-small btn-block btn btn-default'> Center </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="btn col-xs-6 ">
+                                <button ng-click='fabric.centerH();saveState("Center-H")' class='btn btn-small btn-block btn btn-default'> Center Horizontally </button>
+                            </div>
+                            <div class="btn col-xs-6">
+                                <button ng-click='fabric.centerV();saveState("Center-V")' class='btn btn-small btn-block btn btn-default'> Center Vertically </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="btn col-xs-6">
+                                <button ng-click='fabric.bringToFront(); fabric.setDirty(true);saveState("Front")' class='btn btn-small btn-block btn btn-default'> Bring to front </button>
+                            </div>
+                            <div class='btn col-xs-6'>
+                                <button ng-click='fabric.bringForward(); fabric.setDirty(true);saveState("Forward")' class='btn btn-small btn-block btn btn-default'> Bring forwards </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="btn col-xs-6">
+                                <button ng-click='fabric.sendBackwards(); fabric.setDirty(true);saveState("Backward")' class='btn btn-small btn-block btn-default'> Send backwards </button>
+                            </div>
+                            <div class="btn col-xs-6">
+                                <button ng-click='fabric.sendToBack(); fabric.setDirty(true);saveState("Back")' class='btn btn-small btn-block btn-default'> Send to back </button>
+                            </div>
+                        </div>
+                        <button ng-click='fabric.toggleLockActiveObject(); fabric.setDirty(true);saveState("Locked")' ng-class="{ active: fabric.selectedObject.lockObject }" class='btn btn-small btn-block btn-default'> Lock </button>
+                    </div>
+                </div>
+                <div class='col-xs-6'>
+                    <div class='image-builder' parent-click="fabric.deactivateAll()">
+                        <div class='fabric-container'>
+                            <canvas fabric='fabric' ng-model='change.event'></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class='col-xs-3'>
+                    <div>
+                        <table class="table">
+                            <tr>
+                                <th>Action </th>
+                            </tr>
+                            <tr ng-repeat="state in stateList | orderBy:'+': true track by $index">
+                                <td> {{state.State}} </td>
+                                <td>
+                                    <input type="button" value="X" class="btn btn-danger" ng-click="removeRow($index)" /> </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.4.8/fabric.min.js'></script>
+    <script src='https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.js"></script>
+    <script src='https://rawgithub.com/clouddueling/angular-fabric/master/assets/fabric.js'></script>
+    <script src='https://rawgithub.com/clouddueling/angular-fabric/master/assets/fabricCanvas.js'></script>
+    <script src='https://rawgithub.com/clouddueling/angular-fabric/master/assets/fabricConstants.js'></script>
+    <script src='https://rawgithub.com/clouddueling/angular-fabric/master/assets/fabricDirective.js'></script>
+    <script src='https://rawgithub.com/clouddueling/angular-fabric/master/assets/fabricDirtyStatus.js'></script>
+    <script src='https://rawgithub.com/clouddueling/angular-fabric/master/assets/fabricUtilities.js'></script>
+    <script src='https://rawgithub.com/clouddueling/angular-fabric/master/assets/fabricWindow.js'></script>
+    <script src='http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'></script>
+    <script src="http://ngmaterial.assets.s3.amazonaws.com/svg-assets-cache.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.js"></script>
+    <script src="Scripts/bootstrap-colorpicker-module.min.js"></script>
+    <script src="Scripts/index.js"></script>
+</body>
+
+</html>

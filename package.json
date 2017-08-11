@@ -1,0 +1,23 @@
+{
+  "name": "fabrictool",
+  "version": "1.0.0",
+  "description": "Tool which lets you design tshirt prints",
+  "main": "server.js",
+  "dependencies": {
+    "angular-bootstrap-colorpicker": "^3.0.31",
+    "body-parser": "^1.17.2",
+    "express": "^4.15.4",
+    "method-override": "^2.3.9",
+    "morgan": "^1.8.2",
+    "mysql": "^2.14.1",
+    "rfr": "^1.2.3",
+    "shortid": "^2.2.8"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Muralikrishnan Raghavan",
+  "license": "ISC"
+}
