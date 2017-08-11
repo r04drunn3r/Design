@@ -12,6 +12,7 @@ Run the config/script.sql in your mySQL server to create the table required for 
 Install the dependencies and start the server.
 
 ```sh
+$ mkdir Logs
 $ npm install 
 $ node server
 ```
